@@ -2,6 +2,15 @@
 
 A sample Spreadsheet style program in APL
 
+## Project Phases
+
+- [x] Project Plan
+- [x] User Requirements Analysis
+- [ ] Initial Architecture Specification
+- [ ] Increment Planning
+- [ ] Increment 1
+- [ ] ...
+
 ## User Requirements
 
 1. Displays a spreadsheet-like visualization of an APL relation/table.
