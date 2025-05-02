@@ -52,6 +52,41 @@ to a particular view of APL; see [1] for more information.
 15. Two people cannot edit the same cell simultaneously.
 16. Remotely shared sheets disappear from the remote server when all users unlink.
 
+## Architecture
+
+There are two primary sub-systems:
+
+* Sheets Application
+* Document Server
+
+Each syb-system is contained in a single namespace with `Run` entry point.
+
+The sheets application uses Conga to communicate over a single websocket to an 
+HTMLRenderer instance for its UI. We will use plain HTML for the GUI plus 
+a JavaScript engine to render state changes in the system. 
+
+Data is represented as a standard inverted table representation with column 
+types and optional header names. 
+
+Data is persisted by serializing to component files, with one component file 
+per inverted table/sheet. 
+
+Communication with the document server is accomplished by an always on 
+binary conga socket. 
+
+### Client UI Websocket protocol
+
+TBD
+
+### Document Server socket protocol
+
+TBD
+
+### Architectual background information
+
+Much of this architectural design is based on the SAM pattern [2]. 
+
+
 ## References
 
 [1] https://www.amazon.com/Cleanroom-Software-Engineering-Technology-Process/dp/0201854805/
