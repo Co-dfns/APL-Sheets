@@ -21,12 +21,12 @@ A sample Spreadsheet style program in APL
 6. User can import a sheet from a CSV.
 7. User can edit a cell by clicking on it.
 8. Editing can support long contents.
-9. User can open a remotely shared file between 2 or more users.
-10. User can live-share a sheet to a remote share server.
-11. Must use an authentication token to share a sheet or access one.
-12. Two people can edit different cells simultaneously.
-13. Two people cannot edit the same cell simultaneously.
-14. Sheets can be sorted by columns.
-15. Sorting can ignore headers, optionally.
+9. Sheets can be sorted by columns.
+10. Sorting can ignore headers, optionally.
+11. User can open a remotely shared file between 2 or more users.
+12. User can live-share a sheet to a remote share server.
+13. Must use an authentication token to share a sheet or access one.
+14. Two people can edit different cells simultaneously.
+15. Two people cannot edit the same cell simultaneously.
 16. Remotely shared sheets disappear from the remote server when all users unlink.
 
