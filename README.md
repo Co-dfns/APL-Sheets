@@ -28,7 +28,7 @@ to a particular view of APL; see [1] for more information.
 
 - [x] Project Plan
 - [x] User Requirements Analysis
-- [ ] Initial Architecture Specification
+- [x] Initial Architecture Specification
 - [ ] Increment Planning
 - [ ] Increment 1
 - [ ] ...
