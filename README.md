@@ -29,9 +29,12 @@ to a particular view of APL; see [1] for more information.
 - [x] Project Plan
 - [x] User Requirements Analysis
 - [x] Initial Architecture Specification
-- [ ] Increment Planning
+- [x] Increment Planning
 - [ ] Increment 1
-- [ ] ...
+- [ ] Increment 2
+- [ ] Increment 3
+- [ ] Increment 4
+- [ ] Increment 5
 
 ## User Requirements
 
@@ -87,6 +90,116 @@ TBD
 
 Much of this architectural design is based on the SAM pattern [2]. 
 
+## Increments
+
+These increments divide up the work into feedback cycles of implementation, 
+certification, and evaluation. 
+
+### Increment 1: Initial display
+
+**Goal**: Get the basic architecture wiring complete, implement the core specification
+loop, and get rendering and UI layout stuff to work. Basic minimal integration, 
+without any core logic or interactivity. 
+
+*Requirements*:
+
+- [ ] R#01. Displays a spreadsheet-like visualization of an APL relation/table.
+- [ ] R#02. Data is stored efficiently for typical data workflows.
+- [ ] R#03. Spreadsheet can be scrolled around dynamically.
+
+Technical Tasks:
+
+- [ ] Specify Client Update protocol
+- [ ] Implement JS Render Engine
+- [ ] Define UI Layout
+- [ ] Define UI Style
+- [ ] Specify sheet table encoding
+- [ ] Specify core Sheets event loop
+- [ ] Define core responses and stimuli
+- [ ] Define minimal state
+- [ ] Define Conga uplink
+- [ ] Enable defining row and column size of table
+
+### Increment 2: Cell Editing
+
+**Goal**: To get core interactivity working and ensure that the JS rendering 
+protocol is sufficient to the task.
+
+*Requirements*:
+
+- [ ] R#04. User can edit a cell by clicking on it.
+- [ ] R#05. Editing can support long contents.
+
+Technical Tasks:
+
+- [ ] Define stimuli and responses for cell edits
+- [ ] Update specification for handling cell edits
+- [ ] Ensure state updates are consistent
+- [ ] Define per cell updates in the UI rendering engine
+- [ ] Define UI styling for actively edited cells
+
+### Increment 3: Persistence
+
+**Goal**: To enable local file persistence. We want to save and load files 
+of the correct formats. 
+
+*Requirements*:
+
+- [ ] R#06. User can save the sheet to a file.
+- [ ] R#07. User can load a sheet from a file previously saved.
+- [ ] R#08. User can import a sheet from a CSV.
+- [ ] R#09. Edits should auto-save
+
+Technical Tasks:
+
+- [ ] Define persistence functions
+- [ ] Define stimuli and responses for loading and saving
+- [ ] Define UI element for identifying where a file is saved
+- [ ] Define CSV Import Format
+
+### Increment 4: Sorting
+
+**Goal**: To enable editable sorting
+
+*Requirements*:
+
+- [ ] R#10. Sheets can be sorted by columns.
+- [ ] R#11. Sorting can ignore headers, optionally.
+
+Technical Tasks:
+
+- [ ] Enable a permutation vector on state
+- [ ] Map permutation vector on edits
+- [ ] Define reactive UI elements to sort columns
+- [ ] Define sorting responses and stimuli
+
+### Increment 5: Live sharing
+
+**Goal**: To enable live sharing and editing
+
+*Requirements*:
+
+- [ ] R#12. User can open a remotely shared file between 2 or more users.
+- [ ] R#13. User can live-share a sheet to a remote share server.
+- [ ] R#14. Must use an server-wide authentication token to share a sheet or access one.
+- [ ] R#15. Two people can edit different cells simultaneously.
+- [ ] R#16. Two people cannot edit the same cell simultaneously.
+- [ ] R#17. Remotely shared sheets disappear from the remote server when all users unlink.
+
+Technical Tasks, Document Server:
+
+- [ ] Define the document server protocol
+- [ ] Specify and implement the document server stimuli and responses
+- [ ] Define the document server specification
+- [ ] Specify the document server state representation
+- [ ] Define Conga uplink for the document server
+
+Technical Tasks, Client application:
+
+- [ ] Add stimuli and responses for document sharing
+- [ ] Update specification to include document sharing events
+- [ ] Add UI elements to handle sharing
+- [ ] Specify remote sharing functions
 
 ## References
 
