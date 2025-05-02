@@ -204,5 +204,7 @@ Technical Tasks, Client application:
 ## References
 
 [1] https://www.amazon.com/Cleanroom-Software-Engineering-Technology-Process/dp/0201854805/
+
 [2] https://sam.js.org/
+
 [3] https://caseymuratori.com/blog_0001
