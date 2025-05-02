@@ -47,7 +47,7 @@ to a particular view of APL; see [1] for more information.
 10. Sorting can ignore headers, optionally.
 11. User can open a remotely shared file between 2 or more users.
 12. User can live-share a sheet to a remote share server.
-13. Must use an authentication token to share a sheet or access one.
+13. Must use an server-wide authentication token to share a sheet or access one.
 14. Two people can edit different cells simultaneously.
 15. Two people cannot edit the same cell simultaneously.
 16. Remotely shared sheets disappear from the remote server when all users unlink.
