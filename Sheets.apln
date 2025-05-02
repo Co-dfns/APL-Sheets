@@ -6,10 +6,10 @@ Run←{
 	∘∘∘
 }
 
+⍝ State
 ⍝ Stimuli
 ⍝ Responses
 ⍝ Specification
-⍝ State
 ⍝ Persistence
 ⍝ UI Rendering
 ⍝ Conga
