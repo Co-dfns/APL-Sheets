@@ -35,22 +35,23 @@ to a particular view of APL; see [1] for more information.
 
 ## User Requirements
 
-1. Displays a spreadsheet-like visualization of an APL relation/table.
-2. Data is stored efficiently for typical data workflows.
-3. Spreadsheet can be scrolled around dynamically.
-4. User can save the sheet to a file.
-5. User can load a sheet from a file previously saved.
-6. User can import a sheet from a CSV.
-7. User can edit a cell by clicking on it.
-8. Editing can support long contents.
-9. Sheets can be sorted by columns.
-10. Sorting can ignore headers, optionally.
-11. User can open a remotely shared file between 2 or more users.
-12. User can live-share a sheet to a remote share server.
-13. Must use an server-wide authentication token to share a sheet or access one.
-14. Two people can edit different cells simultaneously.
-15. Two people cannot edit the same cell simultaneously.
-16. Remotely shared sheets disappear from the remote server when all users unlink.
+01. Displays a spreadsheet-like visualization of an APL relation/table.
+02. Data is stored efficiently for typical data workflows.
+03. Spreadsheet can be scrolled around dynamically.
+04. User can edit a cell by clicking on it.
+05. Editing can support long contents.
+06. User can save the sheet to a file.
+07. User can load a sheet from a file previously saved.
+08. User can import a sheet from a CSV.
+09. Edits should auto-save
+10. Sheets can be sorted by columns.
+11. Sorting can ignore headers, optionally.
+12. User can open a remotely shared file between 2 or more users.
+13. User can live-share a sheet to a remote share server.
+14. Must use an server-wide authentication token to share a sheet or access one.
+15. Two people can edit different cells simultaneously.
+16. Two people cannot edit the same cell simultaneously.
+17. Remotely shared sheets disappear from the remote server when all users unlink.
 
 ## Architecture
 
