@@ -80,7 +80,40 @@ binary conga socket.
 
 ### Client UI Websocket protocol
 
-TBD
+The HTMLRenderer front-end UI interface communicates with the Dyalog APL session
+via a single websocket connection. 
+
+When an event occurs on the interface side, the interface will send an event 
+to the session of the form:
+
+	[event_type, data]
+
+Where the `data` and the `event_type` sets are to be defined.
+
+The session will send messages to the interface in the form of an array of
+"rendering" messages, which take the form of:
+
+	[node_id, command, data]
+
+Where `node_id` is the node being manipulated, and the following set of 
+commands and data pairs are possible:
+
+| command | data                        |
+| ------- | --------------------------- |
+| `html`  | `"html_string"`             |
+| `text`  | `"text_string"`             |
+| `attr`  | `["attribute", "contents"]` |
+
+Each of these updates the appropriate contents of the node identified by 
+`node_id`. 
+
+In the case of `html` commands, the `innerHTML` contents are updated with 
+the data string.
+
+In the case of `text` commands, the `innerText` property is updated.
+
+In the case of `attr` commands, the `"attribute"` will be set with 
+`setAttribute` to `"contents"`. 
 
 ### Document Server socket protocol
 
@@ -109,7 +142,7 @@ without any core logic or interactivity.
 
 Technical Tasks:
 
-- [ ] Specify Client Update protocol
+- [x] Specify Client Update protocol
 - [ ] Implement JS Render Engine
 - [ ] Define UI Layout
 - [ ] Define UI Style
