@@ -143,15 +143,15 @@ without any core logic or interactivity.
 Technical Tasks:
 
 - [x] Specify Client Update protocol
-- [ ] Implement JS Render Engine
-- [ ] Define UI Layout
-- [ ] Define UI Style
-- [ ] Specify sheet table encoding
-- [ ] Specify core Sheets event loop
-- [ ] Define core responses and stimuli
-- [ ] Define minimal state
-- [ ] Define Conga uplink
-- [ ] Enable defining row and column size of table
+- [x] Implement JS Render Engine
+- [x] Define UI Layout
+- [x] Define UI Style
+- [x] Specify sheet table encoding
+- [x] Specify core Sheets event loop
+- [x] Define core responses and stimuli
+- [x] Define minimal state
+- [x] Define Conga uplink
+- [x] Enable defining row and column size of table
 
 ### Increment 2: Cell Editing
 

@@ -1,18 +1,96 @@
 :Namespace Sheets
 
-⍝ API
+⎕IO ⎕ML←0 1
 
-Run←{
-	∘∘∘
+Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂''
+ _←'Conga'⎕CY⍣(0=⎕NC'Conga')⊢'conga'
+ DRC←Conga.Init'SHEETS_',⍕port
+ _←DRC.SetProp '.' 'EventMode' 1
+ rc srv←DRC.Srv '' 'localhost' port 'http' ('Options' DRC.Options.WSAutoUpgrade)
+ 0≠rc:⎕SIGNAL 99
+ hr←⎕NEW'HtmlRenderer'(⊂'Caption' 'APL Sheets - Copyright (c) 2025 Aaron W. Hsu')
+ hr.HTML←'%PORT%'⎕R(⍕port)⊢ui_src
+ rc obj evt dat←DRC.Wait srv
+ (0≠rc)∨(evt≢'Connect'):⎕SIGNAL 99
+ _←DRC.SetProp srv 'Pause' 1
+ rc obj evt dat←DRC.Wait srv
+ (0≠rc)∨(evt≢'WSUpgrade'):⎕SIGNAL 99
+ SPEC
 }
 
-⍝ State
-⍝ Stimuli
-⍝ Responses
-⍝ Specification
+SHP TERM←1+⍳2
+
+∇Z←LISTEN LC
+ rc obj evt dat←DRC.Wait⍣{(0≠⊃⍺)∨'Timeout'≢2⊃⍺}'#'
+ Z←LC+{
+  (0≠rc)∨evt≢'WSReceive':TERM
+  evt dat∘←⎕JSON dat
+  evt≡'reshape':SHP
+  ⎕SIGNAL 99
+ }⍬
+∇
+
+∇RESHAPE;rows;cols;z
+ rows cols←1⊃⎕VFI ⍕dat
+ r←cols↑(rows↑¨r),(0⌈cols-≢r)⍴⊂rows⍴⊂''
+ z←(,¨'<>&')⎕R'\&lt;' '\&gt;' '\&amp;'¨¨r
+ z{'<td id="c',(∊'_',∘⍕¨⍵),'">',⍺,'</td>'}¨¨←↓⍉⍳rows cols
+ z←∊,∘⍪⌿(⊂rows⍴⊂'<tr>'),z,⊂rows⍴⊂'</tr>'
+ {}DRC.Send obj ((⎕JSON ,⊂'rel' 'html' z) 1 1)
+∇
+
+∇Z←SPEC
+ ∆:→LISTEN ⎕LC
+ ∆_SHP:	RESHAPE	⋄ →∆
+ ∆_TERM:	⋄ →0
+∇
+
+ui_src←'<!DOCTYPE html>'
+ui_src⍪←'<label for="rows">Rows:</label>'
+ui_src⍪←'<input type="number" id="rows" name="rows" min="0">'
+ui_src⍪←'<label for="cols">Columns:</label>'
+ui_src⍪←'<input type="number" id="cols" name="cols" min="0">'
+ui_src⍪←'<table id="rel"></table>'
+ui_src⍪←'<script>'
+ui_src⍪←'var s;'
+ui_src⍪←''
+ui_src⍪←'function init() {'
+ui_src⍪←'	s = new WebSocket("ws://localhost:%PORT%/");'
+ui_src⍪←'	s.onmessage = handle_message;'
+ui_src⍪←'	rows.onchange = reshape;'
+ui_src⍪←'	cols.onchange = reshape;'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'function handle_message(evt) {'
+ui_src⍪←'	var cmds = JSON.parse(evt.data);'
+ui_src⍪←''
+ui_src⍪←'	for (let i = 0; i < cmds.length; i++) {'
+ui_src⍪←'		let [id, cmd, dat] = cmds[i];'
+ui_src⍪←''
+ui_src⍪←'		let node = document.getElementById(id);'
+ui_src⍪←''
+ui_src⍪←'		switch (cmd) {'
+ui_src⍪←'		case "html":'
+ui_src⍪←'			node.innerHTML = dat;'
+ui_src⍪←'			break;'
+ui_src⍪←'		case "text":'
+ui_src⍪←'			node.innerText = dat;'
+ui_src⍪←'			break;'
+ui_src⍪←'		case "attr":'
+ui_src⍪←'			node.setAttribute(...dat);'
+ui_src⍪←'			break;'
+ui_src⍪←'		}'
+ui_src⍪←'	}'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'function reshape(evt) {'
+ui_src⍪←'	s.send(JSON.stringify(["reshape", [rows.value, cols.value]]));'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'window.onload = init;'
+ui_src⍪←'</script>'
+
 ⍝ Persistence
-⍝ UI Rendering
-⍝ Conga
 ⍝ Remote Server
 
 :EndNamespace
