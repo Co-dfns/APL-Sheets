@@ -98,12 +98,13 @@ The session will send messages to the interface in the form of an array of
 Where `node_id` is the node being manipulated, and the following set of 
 commands and data pairs are possible:
 
-| command | data                        |
-| ------- | --------------------------- |
-| `html`  | `"html_string"`             |
-| `text`  | `"text_string"`             |
-| `attr`  | `["attribute", "contents"]` |
-| `focus` | `""`                        |
+| command    | data                        |
+| ---------- | --------------------------- |
+| `html`     | `"html_string"`             |
+| `text`     | `"text_string"`             |
+| `set_attr` | `["attribute", "contents"]` |
+| `attr`     | `"attribute"`               |
+| `focus`    | `""`                        |
 
 Each of these updates the appropriate contents of the node identified by 
 `node_id`. 
@@ -113,8 +114,10 @@ the data string.
 
 In the case of `text` commands, the `innerText` property is updated.
 
-In the case of `attr` commands, the `"attribute"` will be set with 
+In the case of `set_attr` commands, the `"attribute"` will be set with 
 `setAttribute` to `"contents"`. 
+
+With `del_attr`, an attribute is deleted.
 
 The `focus` command will put the focus on the `node_id`.
 

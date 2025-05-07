@@ -36,25 +36,25 @@ CDESEL CEDIT CSEL SHP TERM←1+⍳5
 ∇
 
 ∇DESELECT;cmds
- cmds←,⊂('c','_',∘⍕¨ac) 'attr' ('class' '')
+ cmds←,⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' '')
  ac←¯1 ¯1
- cmds⍪←⊂'cell' 'attr' ('value' '')
- cmds⍪←⊂'cell' 'attr' ('disabled' 'true')
+ cmds⍪←⊂'cell' 'set_attr' ('value' '')
+ cmds⍪←⊂'cell' 'set_attr' ('disabled' 'true')
  {}DRC.Send obj ((⎕JSON cmds) 1 1)
 ∇
 
 ∇EDIT
  (ac⊃r)←dat
- {}DRC.Send obj ((⎕JSON,⊂('c','_',∘⍕¨ac) 'text'(ac⊃r)) 1 1)
+ {}DRC.Send obj ((⎕JSON,⊂('c',∊'_',∘⍕¨ac) 'text'(ac⊃r)) 1 1)
 ∇
 
 ∇SELECT;cmds
  cmds←0⍴⊂'' '' ''
- cmds⍪←⊂(ac∧.>¯1)⌿('c','_',∘⍕¨ac) 'attr' ('class' '')
+ cmds⍪←(ac∧.>¯1)⌿⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' '')
  ac←⊃(⌿⌿)'_'⎕VFI dat
- cmds⍪←⊂('c','_',∘⍕¨ac) 'attr' ('class' 'selected')
- cmds⍪←⊂'cell' 'attr' ('value' (ac⊃r))
- cmds⍪←⊂'cell' 'attr' ('disabled' 'false')
+ cmds⍪←⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' 'selected')
+ cmds⍪←⊂'cell' 'set_attr' ('value' (ac⊃r))
+ cmds⍪←⊂'cell' 'del_attr' 'disabled'
  cmds⍪←⊂'cell' 'focus' ''
  {}DRC.Send obj ((⎕JSON cmds) 1 1)
 ∇
@@ -67,7 +67,7 @@ CDESEL CEDIT CSEL SHP TERM←1+⍳5
  z{'<td id="c',(∊'_',∘⍕¨⍵),'">',⍺,'</td>'}¨¨←↓⍉⍳rows cols
  z←∊,∘⍪⌿(⊂rows⍴⊂'<tr>'),z,⊂rows⍴⊂'</tr>'
  cmds←,⊂'rel' 'html' z
- cmds⍪←⊂(ac∧.>¯1)⌿('c','_',∘⍕¨ac) 'attr' ('class' 'selected')
+ cmds⍪←(ac∧.>¯1)⌿⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' 'selected')
  {}DRC.Send obj ((⎕JSON cmds) 1 1)
 ∇
 
@@ -139,8 +139,11 @@ ui_src⍪←'			break;'
 ui_src⍪←'		case "text":'
 ui_src⍪←'			node.innerText = dat;'
 ui_src⍪←'			break;'
-ui_src⍪←'		case "attr":'
+ui_src⍪←'		case "set_attr":'
 ui_src⍪←'			node.setAttribute(...dat);'
+ui_src⍪←'			break;'
+ui_src⍪←'		case "del_attr":'
+ui_src⍪←'			node.removeAttribute(dat);'
 ui_src⍪←'			break;'
 ui_src⍪←'		case "focus":'
 ui_src⍪←'			node.focus();'
