@@ -3,7 +3,7 @@
 ⎕IO ⎕ML←0 1
 
 Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂''
- _←'Conga'⎕CY⍣(0=⎕NC'Conga')⊢'conga'
+ _←'Conga'⎕CY⍣(0=⊃⎕NC'Conga')⊢'conga'
  DRC←Conga.Init'SHEETS_',⍕port
  _←DRC.SetProp '.' 'EventMode' 1
  rc srv←DRC.Srv '' 'localhost' port 'http' ('Options' DRC.Options.WSAutoUpgrade)
