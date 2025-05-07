@@ -44,8 +44,8 @@ CDESEL CEDIT CSEL SHP TERM←1+⍳5
 ∇
 
 ∇EDIT
- (ac⊃r)←dat
- {}DRC.Send obj ((⎕JSON,⊂('c',∊'_',∘⍕¨ac) 'text'(ac⊃r)) 1 1)
+ ((⌽ac)⊃r)←dat
+ {}DRC.Send obj ((⎕JSON,⊂('c',∊'_',∘⍕¨ac) 'text'((⌽ac)⊃r)) 1 1)
 ∇
 
 ∇SELECT;cmds
@@ -53,7 +53,7 @@ CDESEL CEDIT CSEL SHP TERM←1+⍳5
  cmds⍪←(ac∧.>¯1)⌿⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' '')
  ac←⊃(⌿⌿)'_'⎕VFI dat
  cmds⍪←⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' 'selected')
- cmds⍪←⊂'cell' 'value' (ac⊃r)
+ cmds⍪←⊂'cell' 'value' ((⌽ac)⊃r)
  cmds⍪←⊂'cell' 'del_attr' 'disabled'
  cmds⍪←⊂'cell' 'focus' ''
  {}DRC.Send obj ((⎕JSON cmds) 1 1)
