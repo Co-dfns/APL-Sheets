@@ -10,20 +10,20 @@ Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂''
  0≠rc:⎕SIGNAL 99
  hr←⎕NEW'HtmlRenderer'(⊂'Caption' 'APL Sheets - Copyright (c) 2025 Aaron W. Hsu')
  hr.HTML←'%PORT%'⎕R(⍕port)⊢ui_src
- rc obj evt dat←DRC.Wait srv
- (0≠rc)∨(evt≢'Connect'):⎕SIGNAL 99
+ 0≠⊃z←DRC.Wait srv:(⍕z)⎕SIGNAL 99
+ rc obj evt dat←z ⋄ evt≢'Connect':⎕SIGNAL 99
  _←DRC.SetProp srv 'Pause' 1
- rc obj evt dat←DRC.Wait srv
- (0≠rc)∨(evt≢'WSUpgrade'):⎕SIGNAL 99
+ 0≠⊃z←DRC.Wait srv:(⍕z)⎕SIGNAL 99
+ rc obj evt dat←z ⋄ evt≢'WSUpgrade':⎕SIGNAL 99
  SPEC
 }
 
 SHP TERM←1+⍳2
 
 ∇Z←LISTEN LC
- rc obj evt dat←DRC.Wait⍣{(0≠⊃⍺)∨'Timeout'≢2⊃⍺}'#'
+ rc obj evt dat←DRC.Wait⍣{0≠⊃⍺:(⍕⍺)⎕SIGNAL 99 ⋄ 'Timeout'≢2⊃⍺}'#'
  Z←LC+{
-  (0≠rc)∨evt≢'WSReceive':TERM
+  evt≢'WSReceive':TERM
   evt dat∘←⎕JSON dat
   evt≡'reshape':SHP
   ⎕SIGNAL 99
