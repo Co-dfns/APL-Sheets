@@ -72,18 +72,18 @@ CDESEL CEDIT CSEL SHP TERM←1+⍳5
 ∇
 
 ∇Z←SPEC
- ∆:→LISTEN ⎕LC
+ ∆_:→LISTEN ⎕LC
  ∆_CDESEL:	∘∘∘		⋄ →0
  ∆_CEDIT:	∘∘∘		⋄ →0
- ∆_CSEL:	SELECT		⋄ →∆_CSEL
- ∆_SHP:		RESHAPE		⋄ →∆
+ ∆_CSEL:	SELECT		⋄ →∆_CSEL_
+ ∆_SHP:		RESHAPE		⋄ →∆_
  ∆_TERM:			⋄ →0
 
- ∆_CSEL:→LISTEN ⎕LC
- ∆_CSEL_CDESEL:	DESELECT	⋄ →∆
- ∆_CSEL_CEDIT:	EDIT		⋄ →∆_CSEL
- ∆_CSEL_CSEL:	SELECT		⋄ →∆_CSEL
- ∆_CSEL_SHP:	RESHAPE		⋄ →∆_CSEL
+ ∆_CSEL_:→LISTEN ⎕LC
+ ∆_CSEL_CDESEL:	DESELECT	⋄ →∆_
+ ∆_CSEL_CEDIT:	EDIT		⋄ →∆_CSEL_
+ ∆_CSEL_CSEL:	SELECT		⋄ →∆_CSEL_
+ ∆_CSEL_SHP:	RESHAPE		⋄ →∆_CSEL_
  ∆_CSEL_TERM:			⋄ →0
 ∇
 
