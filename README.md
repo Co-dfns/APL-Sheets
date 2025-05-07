@@ -166,8 +166,8 @@ protocol is sufficient to the task.
 
 *Requirements*:
 
-- [ ] R#04. User can edit a cell by clicking on it.
-- [ ] R#05. Editing can support long contents.
+- [x] R#04. User can edit a cell by clicking on it.
+- [x] R#05. Editing can support long contents.
 
 Technical Tasks:
 
