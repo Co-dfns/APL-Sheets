@@ -24,7 +24,7 @@ SHP TERM←1+⍳2
  rc obj evt dat←{DRC.Wait'.'}⍣{0≠⊃⍺:(⍕⍺)⎕SIGNAL 99 ⋄ 'Timeout'≢2⊃⍺}⍬
  Z←LC+{
   evt≢'WSReceive':TERM
-  evt dat∘←⎕JSON dat
+  evt dat∘←⎕JSON ⊃dat
   evt≡'reshape':SHP
   ⎕SIGNAL 99
  }⍬
