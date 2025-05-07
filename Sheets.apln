@@ -2,7 +2,7 @@
 
 ⎕IO ⎕ML←0 1
 
-Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂''
+Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂'' ⋄ ac←¯1 ¯1
  _←'Conga'⎕CY⍣(0=⊃⎕NC'Conga')⊢'conga'
  DRC←Conga.Init'SHEETS_',⍕port
  _←DRC.SetProp '.' 'EventMode' 1
@@ -18,31 +18,73 @@ Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂''
  SPEC
 }
 
-SHP TERM←1+⍳2
+CDESEL CEDIT CSEL SHP TERM←1+⍳5
 
 ∇Z←LISTEN LC
  rc obj evt dat←{DRC.Wait'.'}⍣{0≠⊃⍺:(⍕⍺)⎕SIGNAL 99 ⋄ 'Timeout'≢2⊃⍺}⍬
  Z←LC+{
-  evt≢'WSReceive':TERM
+  evt≢'WSReceive':TERM			⍝ TERM: Application termination
   evt dat∘←⎕JSON ⊃dat
-  evt≡'reshape':SHP
+  evt≡'reshape':SHP			⍝ SHP: The user has changed sheet dimensions
+  evt≡'select':{
+	ac≡⊃(⌿⌿)'_'⎕VFI dat:CDESEL	⍝ CDESEL: Deselect a selected cell
+	CSEL				⍝ CSEL: A new cell is selected
+  }⍬
+  evt≡'edit':CEDIT			⍝ CEDIT: Cell contents have changed
   ⎕SIGNAL 99
  }⍬
 ∇
 
-∇RESHAPE;rows;cols;z
+∇DESELECT;cmds
+ cmds←,⊂('c','_',∘⍕¨ac) 'attr' ('class' '')
+ ac←¯1 ¯1
+ cmds⍪←⊂'cell' 'attr' ('value' '')
+ cmds⍪←⊂'cell' 'attr' ('disabled' 'true')
+ {}DRC.Send obj ((⎕JSON cmds) 1 1)
+∇
+
+∇EDIT
+ (ac⊃r)←dat
+ {}DRC.Send obj ((⎕JSON,⊂('c','_',∘⍕¨ac) 'text'(ac⊃r)) 1 1)
+∇
+
+∇SELECT;cmds
+ cmds←0⍴⊂'' '' ''
+ cmds⍪←⊂(ac∧.>¯1)⌿('c','_',∘⍕¨ac) 'attr' ('class' '')
+ ac←⊃(⌿⌿)'_'⎕VFI dat
+ cmds⍪←⊂('c','_',∘⍕¨ac) 'attr' ('class' 'selected')
+ cmds⍪←⊂'cell' 'attr' ('value' (ac⊃r))
+ cmds⍪←⊂'cell' 'attr' ('disabled' 'false')
+ cmds⍪←⊂'cell' 'focus' ''
+ {}DRC.Send obj ((⎕JSON cmds) 1 1)
+∇
+
+∇RESHAPE;rows;cols;cmds;z
  rows cols←1⊃⎕VFI ⍕dat
  r←cols↑(rows↑¨r),(0⌈cols-≢r)⍴⊂rows⍴⊂''
+ ac[⍸2⍴ac∨.≥rows cols]←¯1
  z←(,¨'<>&')⎕R'\&lt;' '\&gt;' '\&amp;'¨¨r
  z{'<td id="c',(∊'_',∘⍕¨⍵),'">',⍺,'</td>'}¨¨←↓⍉⍳rows cols
  z←∊,∘⍪⌿(⊂rows⍴⊂'<tr>'),z,⊂rows⍴⊂'</tr>'
- {}DRC.Send obj ((⎕JSON ,⊂'rel' 'html' z) 1 1)
+ cmds←,⊂'rel' 'html' z
+ cmds⍪←⊂(ac∧.>¯1)⌿('c','_',∘⍕¨ac) 'attr' ('class' 'selected')
+ {}DRC.Send obj ((⎕JSON cmds) 1 1)
 ∇
 
 ∇Z←SPEC
  ∆:→LISTEN ⎕LC
- ∆_SHP:	RESHAPE	⋄ →∆
- ∆_TERM:	⋄ →0
+ ∆_CDESEL:	∘∘∘		⋄ →0
+ ∆_CEDIT:	∘∘∘		⋄ →0
+ ∆_CSEL:	SELECT		⋄ →∆_CSEL
+ ∆_SHP:		RESHAPE		⋄ →∆
+ ∆_TERM:			⋄ →0
+
+ ∆_CSEL:→LISTEN ⎕LC
+ ∆_CSEL_CDESEL:	DESELECT	⋄ →∆
+ ∆_CSEL_CEDIT:	EDIT		⋄ →∆_CSEL
+ ∆_CSEL_CSEL:	SELECT		⋄ →∆_CSEL
+ ∆_CSEL_SHP:	RESHAPE		⋄ →∆_CSEL
+ ∆_CSEL_TERM:			⋄ →0
 ∇
 
 ui_src←'<!DOCTYPE html>'
@@ -52,13 +94,23 @@ ui_src⍪←'table#rel, table#rel td {'
 ui_src⍪←'	border: 1px solid black;'
 ui_src⍪←'	height: 1em;'
 ui_src⍪←'	min-width: 6em;'
+ui_src⍪←'	max-width: 12em;'
 ui_src⍪←'	border-collapse: collapse;'
+ui_src⍪←'}'
+ui_src⍪←'#cell {'
+ui_src⍪←'	width: 100%;'
+ui_src⍪←'	margin-top: 0.5em;'
+ui_src⍪←'	margin-bottom: 0.5em;'
+ui_src⍪←'}'
+ui_src⍪←'td.selected {'
+ui_src⍪←'	background-color: aqua;'
 ui_src⍪←'}'
 ui_src⍪←'</style>'
 ui_src⍪←'<label for="rows">Rows:</label>'
 ui_src⍪←'<input type="number" id="rows" name="rows" min="0" value="0">'
 ui_src⍪←'<label for="cols">Columns:</label>'
 ui_src⍪←'<input type="number" id="cols" name="cols" min="0" value="0">'
+ui_src⍪←'<input type="text" id="cell" name="cell" disabled>'
 ui_src⍪←'<table id="rel"></table>'
 ui_src⍪←'<script>'
 ui_src⍪←'var s;'
@@ -68,6 +120,8 @@ ui_src⍪←'	s = new WebSocket("ws://localhost:%PORT%/");'
 ui_src⍪←'	s.onmessage = handle_message;'
 ui_src⍪←'	rows.onchange = reshape;'
 ui_src⍪←'	cols.onchange = reshape;'
+ui_src⍪←'	cell.onchange = edit;'
+ui_src⍪←'	rel.onclick = select;'
 ui_src⍪←'}'
 ui_src⍪←''
 ui_src⍪←'function handle_message(evt) {'
@@ -88,12 +142,23 @@ ui_src⍪←'			break;'
 ui_src⍪←'		case "attr":'
 ui_src⍪←'			node.setAttribute(...dat);'
 ui_src⍪←'			break;'
+ui_src⍪←'		case "focus":'
+ui_src⍪←'			node.focus();'
+ui_src⍪←'			break;'
 ui_src⍪←'		}'
 ui_src⍪←'	}'
 ui_src⍪←'}'
 ui_src⍪←''
 ui_src⍪←'function reshape(evt) {'
 ui_src⍪←'	s.send(JSON.stringify(["reshape", [rows.value, cols.value]]));'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'function edit(evt) {'
+ui_src⍪←'	s.send(JSON.stringify(["edit", cell.value]));'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'function select(evt) {'
+ui_src⍪←'	s.send(JSON.stringify(["select", evt.target.id]));'
 ui_src⍪←'}'
 ui_src⍪←''
 ui_src⍪←'window.onload = init;'

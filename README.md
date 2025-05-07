@@ -103,6 +103,7 @@ commands and data pairs are possible:
 | `html`  | `"html_string"`             |
 | `text`  | `"text_string"`             |
 | `attr`  | `["attribute", "contents"]` |
+| `focus` | `""`                        |
 
 Each of these updates the appropriate contents of the node identified by 
 `node_id`. 
@@ -114,6 +115,8 @@ In the case of `text` commands, the `innerText` property is updated.
 
 In the case of `attr` commands, the `"attribute"` will be set with 
 `setAttribute` to `"contents"`. 
+
+The `focus` command will put the focus on the `node_id`.
 
 ### Document Server socket protocol
 
@@ -165,11 +168,11 @@ protocol is sufficient to the task.
 
 Technical Tasks:
 
-- [ ] Define stimuli and responses for cell edits
-- [ ] Update specification for handling cell edits
-- [ ] Ensure state updates are consistent
-- [ ] Define per cell updates in the UI rendering engine
-- [ ] Define UI styling for actively edited cells
+- [x] Define stimuli and responses for cell edits
+- [x] Update specification for handling cell edits
+- [x] Ensure state updates are consistent
+- [x] Define per cell updates in the UI rendering engine
+- [x] Define UI styling for actively edited cells
 
 ### Increment 3: Persistence
 
