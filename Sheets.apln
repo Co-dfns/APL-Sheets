@@ -38,7 +38,7 @@ CDESEL CEDIT CSEL SHP TERM←1+⍳5
 ∇DESELECT;cmds
  cmds←,⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' '')
  ac←¯1 ¯1
- cmds⍪←⊂'cell' 'set_attr' ('value' '')
+ cmds⍪←⊂'cell' 'value' ''
  cmds⍪←⊂'cell' 'set_attr' ('disabled' 'true')
  {}DRC.Send obj ((⎕JSON cmds) 1 1)
 ∇
@@ -53,7 +53,7 @@ CDESEL CEDIT CSEL SHP TERM←1+⍳5
  cmds⍪←(ac∧.>¯1)⌿⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' '')
  ac←⊃(⌿⌿)'_'⎕VFI dat
  cmds⍪←⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' 'selected')
- cmds⍪←⊂'cell' 'set_attr' ('value' (ac⊃r))
+ cmds⍪←⊂'cell' 'value' (ac⊃r)
  cmds⍪←⊂'cell' 'del_attr' 'disabled'
  cmds⍪←⊂'cell' 'focus' ''
  {}DRC.Send obj ((⎕JSON cmds) 1 1)
@@ -96,6 +96,9 @@ ui_src⍪←'	height: 1em;'
 ui_src⍪←'	min-width: 6em;'
 ui_src⍪←'	max-width: 12em;'
 ui_src⍪←'	border-collapse: collapse;'
+ui_src⍪←'	overflow: hidden;'
+ui_src⍪←'	text-overflow: clip;'
+ui_src⍪←'	white-space: nowrap;'
 ui_src⍪←'}'
 ui_src⍪←'#cell {'
 ui_src⍪←'	width: 100%;'
@@ -138,6 +141,9 @@ ui_src⍪←'			node.innerHTML = dat;'
 ui_src⍪←'			break;'
 ui_src⍪←'		case "text":'
 ui_src⍪←'			node.innerText = dat;'
+ui_src⍪←'			break;'
+ui_src⍪←'		case "value":'
+ui_src⍪←'			node.value = dat;'
 ui_src⍪←'			break;'
 ui_src⍪←'		case "set_attr":'
 ui_src⍪←'			node.setAttribute(...dat);'
