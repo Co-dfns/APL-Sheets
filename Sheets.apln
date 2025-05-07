@@ -21,7 +21,7 @@ Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂''
 SHP TERM←1+⍳2
 
 ∇Z←LISTEN LC
- rc obj evt dat←DRC.Wait⍣{0≠⊃⍺:(⍕⍺)⎕SIGNAL 99 ⋄ 'Timeout'≢2⊃⍺}'.'
+ rc obj evt dat←{DRC.Wait'.'}⍣{0≠⊃⍺:(⍕⍺)⎕SIGNAL 99 ⋄ 'Timeout'≢2⊃⍺}⍬
  Z←LC+{
   evt≢'WSReceive':TERM
   evt dat∘←⎕JSON dat
