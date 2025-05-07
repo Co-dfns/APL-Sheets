@@ -30,7 +30,7 @@ to a particular view of APL; see [1] for more information.
 - [x] User Requirements Analysis
 - [x] Initial Architecture Specification
 - [x] Increment Planning
-- [ ] Increment 1
+- [x] Increment 1
 - [ ] Increment 2
 - [ ] Increment 3
 - [ ] Increment 4
@@ -136,9 +136,9 @@ without any core logic or interactivity.
 
 *Requirements*:
 
-- [ ] R#01. Displays a spreadsheet-like visualization of an APL relation/table.
-- [ ] R#02. Data is stored efficiently for typical data workflows.
-- [ ] R#03. Spreadsheet can be scrolled around dynamically.
+- [x] R#01. Displays a spreadsheet-like visualization of an APL relation/table.
+- [x] R#02. Data is stored efficiently for typical data workflows.
+- [x] R#03. Spreadsheet can be scrolled around dynamically.
 
 Technical Tasks:
 
