@@ -31,8 +31,8 @@ to a particular view of APL; see [1] for more information.
 - [x] Initial Architecture Specification
 - [x] Increment Planning
 - [x] Increment 1
-- [ ] Increment 2
-- [ ] Increment 3
+- [x] Increment 2
+- [x] Increment 3
 - [ ] Increment 4
 - [ ] Increment 5
 
