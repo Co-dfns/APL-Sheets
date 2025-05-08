@@ -161,7 +161,7 @@ CDESEL CEDIT CSEL FBAD FCEQ FCNQ FNEW FXST IMP SPN SPS TERM UNLK←1+⍳13
 
 ∇PUTALL;rc;hr
  hr←(⊂h),r ⋄ rc←-⌿⌽2↑⎕FSIZE tie
- ⎕FDROP tie,0⌊(≢hr)-rc
+ ⎕FDROP tie,0⌊(≢hr)-rc ⋄ rc⌊←≢hr
  (rc↑hr)⎕FREPLACE¨tie,¨1+⍳rc
  →0⌿⍨rc≥≢hr
  (rc↓hr)⎕FAPPEND¨tie
