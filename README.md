@@ -102,6 +102,7 @@ commands and data pairs are possible:
 | ---------- | --------------------------- |
 | `html`     | `"html_string"`             |
 | `text`     | `"text_string"`             |
+| `value`    | `"data"`                    |
 | `set_attr` | `["attribute", "contents"]` |
 | `attr`     | `"attribute"`               |
 | `focus`    | `""`                        |
@@ -113,6 +114,8 @@ In the case of `html` commands, the `innerHTML` contents are updated with
 the data string.
 
 In the case of `text` commands, the `innerText` property is updated.
+
+The `value` command sets the value property of a node.
 
 In the case of `set_attr` commands, the `"attribute"` will be set with 
 `setAttribute` to `"contents"`. 
