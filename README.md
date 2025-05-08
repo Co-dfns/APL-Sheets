@@ -191,10 +191,11 @@ of the correct formats.
 
 Technical Tasks:
 
-- [ ] Define persistence functions
-- [ ] Define stimuli and responses for loading and saving
-- [ ] Define UI element for identifying where a file is saved
-- [ ] Define CSV Import Format
+- [x] Define persistence functions
+- [x] Define stimuli and responses for loading and saving
+- [x] Define UI element for identifying where a file is saved
+- [x] Specify new states in the specification table
+- [x] Define CSV Import Format
 
 ### Increment 4: Sorting
 

@@ -2,7 +2,7 @@
 
 ⎕IO ⎕ML←0 1
 
-Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂'' ⋄ ac←¯1 ¯1
+Run←{port←(0=≢⍵)⊃⍵ 4572 ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂'' ⋄ ac←¯1 ¯1 ⋄ tie←¯1 ⋄ fn←''
  _←'Conga'⎕CY⍣(0=⊃⎕NC'Conga')⊢'conga'
  DRC←Conga.Init'SHEETS_',⍕port
  _←DRC.SetProp '.' 'EventMode' 1
@@ -15,77 +15,213 @@ Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂'' ⋄ ac←¯1 ¯1
  _←DRC.SetProp srv 'Pause' 1
  0≠⊃z←DRC.Wait srv:(⍕z)⎕SIGNAL 99
  rc obj evt dat←z ⋄ evt≢'WSUpgrade':⎕SIGNAL 99
+ cmds←0⍴⊂'' '' ''
  SPEC
 }
 
-CDESEL CEDIT CSEL SHP TERM←1+⍳5
+CDESEL CEDIT CSEL FBAD FCEQ FCNQ FNEW FXST IMP SPN SPS TERM UNLK←1+⍳13
 
 ∇Z←LISTEN LC
  rc obj evt dat←{DRC.Wait'.'}⍣{0≠⊃⍺:(⍕⍺)⎕SIGNAL 99 ⋄ 'Timeout'≢2⊃⍺}⍬
  Z←LC+{
   evt≢'WSReceive':TERM			⍝ TERM: Application termination
   evt dat∘←⎕JSON ⊃dat
-  evt≡'reshape':SHP			⍝ SHP: The user has changed sheet dimensions
   evt≡'select':{
 	ac≡⊃(⌿⌿)'_'⎕VFI dat:CDESEL	⍝ CDESEL: Deselect a selected cell
 	CSEL				⍝ CSEL: A new cell is selected
   }⍬
   evt≡'edit':CEDIT			⍝ CEDIT: Cell contents have changed
+  evt≡'reshape':{
+	ac∧.<⊃(⌿⌿)⎕VFI ⍕dat:SPS		⍝ SPS: Changed dims, selection in range
+	SPN				⍝ SPN: Changed dims, selection out of range
+  }⍬
+  evt≡'file':{
+	dat≡fn:FCEQ			⍝ FCEQ: File field changed, matches link
+	FCNQ				⍝ FCNQ: File field changed, no-match link
+  }⍬
+  evt≡'link':{
+	(dat≡'')∨dat≡fn:UNLK		⍝ UNLK: Request an unlink
+	⎕NEXISTS dat:{
+		valid_dcf dat:FXST	⍝ FXST: Existing file submitted
+		FBAD			⍝ FBAD: A bad file path or contents
+	}⍬
+	valid_file dat:FNEW		⍝ FNEW: File
+	FBAD
+  }⍬
+  evt≡'import':{
+	0::FBAD
+	dat∘←⎕CSV⍠('Invert' 2)⊢dat
+	IMP				⍝ IMP: Import file request
+  }⍬
   ⎕SIGNAL 99
  }⍬
 ∇
 
-∇DESELECT;cmds
- cmds←,⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' '')
- ac←¯1 ¯1
+∇CLRERR
+ cmds⍪←⊂'msg' 'text' ''
+∇
+
+∇ERRFILE
+ cmds⍪←⊂'msg' 'text' 'Invalid file.'
+∇
+
+∇CELCLR
+ cmds⍪←⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' '')
+∇
+
+∇CELFIL
+ cmds⍪←⊂('c',∊'_',∘⍕¨ac) 'text'((⌽ac)⊃r)
+∇
+
+∇CELHLT
+ cmds⍪←⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' 'selected')
+∇
+
+∇EDTCLR
  cmds⍪←⊂'cell' 'value' ''
  cmds⍪←⊂'cell' 'set_attr' ('disabled' 'true')
- {}DRC.Send obj ((⎕JSON cmds) 1 1)
 ∇
 
-∇EDIT
- ((⌽ac)⊃r)←dat
- {}DRC.Send obj ((⎕JSON,⊂('c',∊'_',∘⍕¨ac) 'text'((⌽ac)⊃r)) 1 1)
-∇
-
-∇SELECT;cmds
- cmds←0⍴⊂'' '' ''
- cmds⍪←(ac∧.>¯1)⌿⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' '')
- ac←⊃(⌿⌿)'_'⎕VFI dat
- cmds⍪←⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' 'selected')
+∇EDTFIL
  cmds⍪←⊂'cell' 'value' ((⌽ac)⊃r)
  cmds⍪←⊂'cell' 'del_attr' 'disabled'
  cmds⍪←⊂'cell' 'focus' ''
+∇
+
+∇LKBLNK
+ cmds⍪←⊂'link' 'text' 'Link'
+∇
+
+∇LKBULK
+ cmds⍪←⊂'link' 'text' 'Unlink'
+∇
+
+∇TBL;z
+ z←(,¨'<>&')⎕R'\&lt;' '\&gt;' '\&amp;'¨¨r
+ z{'<td id="c',(∊'_',∘⍕¨⍵),'">',⍺,'</td>'}¨¨←↓⍉⍳rows cols
+ z←∊,∘⍪⌿(⊂rows⍴⊂'<tr>'),z,⊂rows⍴⊂'</tr>'
+ cmds⍪←⊂'rel' 'html' z
+∇
+
+∇UP
  {}DRC.Send obj ((⎕JSON cmds) 1 1)
+ cmds←0⍴⊂'' '' ''
 ∇
 
 ∇RESHAPE;rows;cols;cmds;z
  rows cols←1⊃⎕VFI ⍕dat
  r←cols↑(rows↑¨r),(0⌈cols-≢r)⍴⊂rows⍴⊂''
- ac[⍸2⍴ac∨.≥rows cols]←¯1
- z←(,¨'<>&')⎕R'\&lt;' '\&gt;' '\&amp;'¨¨r
- z{'<td id="c',(∊'_',∘⍕¨⍵),'">',⍺,'</td>'}¨¨←↓⍉⍳rows cols
- z←∊,∘⍪⌿(⊂rows⍴⊂'<tr>'),z,⊂rows⍴⊂'</tr>'
- cmds←,⊂'rel' 'html' z
- cmds⍪←(ac∧.>¯1)⌿⊂('c',∊'_',∘⍕¨ac) 'set_attr' ('class' 'selected')
- {}DRC.Send obj ((⎕JSON cmds) 1 1)
+∇
+
+∇SELECT
+ ac←⊃(⌿⌿)'_'⎕VFI dat
+∇
+
+∇DESELECT
+ ac←¯1 ¯1
+∇
+
+∇EDIT
+ ((⌽ac)⊃r)←dat
+∇
+
+∇IMPORT
+ r←dat
+∇
+
+∇CREATE
+ fn←dat
+ tie←fn ⎕FCREATE⍠('J' 3)('C' 1)('Z' 1)⊢0
+ ((⊂h),r)⎕FAPPEND¨tie
+∇
+
+∇LOAD
+ fn←dat ⋄ tie←fn ⎕FTIE 0
+ h←⎕FREAD tie 1
+ r←⎕FREAD tie (2↓⍳1⊃⎕FSIZE tie)
+∇
+
+∇UNLINK
+ ⎕FUNTIE tie ⋄ fn←'' ⋄ tie←¯1
+∇
+
+∇PUTCOL
+ h ⎕FREPLACE tie 1
+ ((1⊃ac)⊃r)⎕FREPLACE tie (2+1⊃ac)
+∇
+
+∇PUTALL;rc;hr
+ hr←(⊂h),r ⋄ rc←-⌿⌽2↑⎕FSIZE tie
+ ⎕FDROP tie,0⌊(≢hr)-rc
+ (rc↑hr)⎕FREPLACE¨tie,¨1+⍳rc
+ →0⌿⍨rc≥≢hr
+ (rc↓hr)⎕FAPPEND¨tie
 ∇
 
 ∇Z←SPEC
  ∆_:→LISTEN ⎕LC
- ∆_CDESEL:	∘∘∘		⋄ →0
- ∆_CEDIT:	∘∘∘		⋄ →0
- ∆_CSEL:	SELECT		⋄ →∆_CSEL_
- ∆_SHP:		RESHAPE		⋄ →∆_
- ∆_TERM:			⋄ →0
+ ∆_CDESEL:	∘∘∘				⋄ →0
+ ∆_CEDIT:	∘∘∘				⋄ →0
+ ∆_CSEL:	SELECT ⋄ CELHLT ⋄ EDTFIL ⋄ UP	⋄ →∆_CSEL_
+ ∆_FBAD:	ERRFILE ⋄ UP ⋄ CLRERR		⋄ →∆_
+ ∆_FCEQ:					⋄ →∆_
+ ∆_FCNQ:					⋄ →∆_
+ ∆_FNEW:	CREATE ⋄ LKBULK ⋄ UP		⋄ →∆_FXST_
+ ∆_FXST:	LOAD ⋄ TBL ⋄ LKBULK ⋄ UP	⋄ →∆_FXST_
+ ∆_IMP:		IMPORT ⋄ TBL ⋄ UP		⋄ →∆_
+ ∆_SPN:		∘∘∘				⋄ →0
+ ∆_SPS:		RESHAPE ⋄ TBL ⋄ UP		⋄ →∆_
+ ∆_TERM:					⋄ →0
+ ∆_UNLK:					⋄ →∆_
 
  ∆_CSEL_:→LISTEN ⎕LC
- ∆_CSEL_CDESEL:	DESELECT	⋄ →∆_
- ∆_CSEL_CEDIT:	EDIT		⋄ →∆_CSEL_
- ∆_CSEL_CSEL:	SELECT		⋄ →∆_CSEL_
- ∆_CSEL_SHP:	RESHAPE		⋄ →∆_CSEL_
- ∆_CSEL_TERM:			⋄ →0
+ ∆_CSEL_CDESEL:	EDTCLR ⋄ CELCLR ⋄ DESELECT ⋄ UP			⋄ →∆_
+ ∆_CSEL_CEDIT:	EDIT ⋄ CELFIL ⋄ UP				⋄ →∆_CSEL_
+ ∆_CSEL_CSEL:	CELCLR ⋄ SELECT ⋄ CELHLT ⋄ EDTFIL ⋄ UP		⋄ →∆_CSEL_
+ ∆_CSEL_FBAD:	ERRFILE ⋄ UP ⋄ CLRERR				⋄ →∆_CSEL_
+ ∆_CSEL_FCEQ:							⋄ →∆_CSEL_
+ ∆_CSEL_FCNQ:							⋄ →∆_CSEL_
+ ∆_CSEL_FNEW:	CREATE ⋄ LKBULK ⋄ UP				⋄ →∆_CSEL_FNEW_
+ ∆_CSEL_FXST:	EDTCLR ⋄ DESELECT ⋄ LOAD ⋄ TBL ⋄ LKBULK ⋄ UP	⋄ →∆_FXST_
+ ∆_CSEL_IMP:	EDTCLR ⋄ DESELECT ⋄ IMPORT ⋄ TBL ⋄ UP		⋄ →∆_
+ ∆_CSEL_SPN:	EDTCLR ⋄ DESELECT ⋄ RESHAPE ⋄ TBL ⋄ UP		⋄ →∆_
+ ∆_CSEL_SPS:	RESHAPE	⋄ TBL ⋄ CELHLT ⋄ UP			⋄ →∆_CSEL_
+ ∆_CSEL_TERM:							⋄ →0
+ ∆_CSEL_UNLK:							⋄ →∆_CSEL_
+
+ ∆_FXST_:→LISTEN ⎕LC
+ ∆_FXST_CDESEL:	∘∘∘					⋄ →0
+ ∆_FXST_CEDIT:	∘∘∘					⋄ →0
+ ∆_FXST_CSEL:	SELECT ⋄ CELHLT ⋄ EDTFIL ⋄ UP		⋄ →∆_CSEL_FNEW_
+ ∆_FXST_FBAD:	ERRFILE ⋄ UP ⋄ CLRERR			⋄ →∆_FXST_
+ ∆_FXST_FCEQ:	LKBULK ⋄ UP				⋄ →∆_FXST_
+ ∆_FXST_FCNQ:	LKBLNK ⋄ UP				⋄ →∆_FXST_
+ ∆_FXST_FNEW:	UNLINK ⋄ CREATE	⋄ LKBULK ⋄ UP		⋄ →∆_FXST_
+ ∆_FXST_FXST:	UNLINK ⋄ LOAD ⋄ TBL ⋄ LKBULK ⋄ UP	⋄ →∆_FXST_
+ ∆_FXST_IMP:	UNLINK ⋄ IMPORT ⋄ TBL ⋄ LKBLNK ⋄ UP	⋄ →∆_
+ ∆_FXST_SPN:	∘∘∘					⋄ →0
+ ∆_FXST_SPS:	RESHAPE ⋄ PUTALL ⋄ TBL ⋄ UP		⋄ →∆_FXST_
+ ∆_FXST_TERM:	UNLINK					⋄ →0
+ ∆_FXST_UNLK:	UNLINK ⋄ LKBLNK ⋄ UP			⋄ →∆_
+ 
+ ∆_CSEL_FNEW_:→LISTEN ⎕LC
+ ∆_CSEL_FNEW_CDESEL:	EDTCLR ⋄ CELCLR ⋄ DESELECT ⋄ UP				⋄ →∆_FXST_
+ ∆_CSEL_FNEW_CEDIT:	EDIT ⋄ CELFIL ⋄ PUTCOL ⋄ UP				⋄ →∆_CSEL_FNEW_
+ ∆_CSEL_FNEW_CSEL:	CELCLR ⋄ SELECT ⋄ CELHLT ⋄ EDTFIL ⋄ UP			⋄ →∆_CSEL_FNEW_
+ ∆_CSEL_FNEW_FBAD:	ERRFILE ⋄ UP ⋄ CLRERR					⋄ →∆_CSEL_FNEW_
+ ∆_CSEL_FNEW_FCEQ:	LKBULK ⋄ UP						⋄ →∆_CSEL_FNEW_
+ ∆_CSEL_FNEW_FCNQ:	LKBLNK ⋄ UP						⋄ →∆_CSEL_FNEW_
+ ∆_CSEL_FNEW_FNEW:	UNLINK ⋄ CREATE ⋄ LKBULK ⋄ UP				⋄ →∆_CSEL_FNEW_
+ ∆_CSEL_FNEW_FXST:	EDTCLR ⋄ DESELECT ⋄ UNLINK ⋄ LOAD ⋄ TBL ⋄ LKBULK ⋄ UP	⋄ →∆_FXST_
+ ∆_CSEL_FNEW_IMP:	EDTCLR ⋄ DESELECT ⋄ UNLINK ⋄ IMPORT ⋄ TBL ⋄ LKBLNK ⋄ UP	⋄ →∆_
+ ∆_CSEL_FNEW_SPN:	EDTCLR ⋄ DESELECT ⋄ RESHAPE ⋄ PUTALL ⋄ TBL ⋄ UP		⋄ →∆_FXST_
+ ∆_CSEL_FNEW_SPS:	RESHAPE	⋄ PUTALL ⋄ TBL ⋄ CELHLT ⋄ UP			⋄ →∆_CSEL_FNEW_
+ ∆_CSEL_FNEW_TERM:	UNLINK							⋄ →0
+ ∆_CSEL_FNEW_UNLK:	UNLINK ⋄ LKBLNK ⋄ UP					⋄ →∆_CSEL_
 ∇
+
+valid_file←{0::0 ⋄ 1⊣⍵ ⎕FERASE ⍵ ⎕FCREATE 0}
+valid_dcf←{0::0 ⋄ 1⊣⎕FUNTIE ⍵ ⎕FTIE 0}
 
 ui_src←'<!DOCTYPE html>'
 ui_src⍪←'<style>'
@@ -107,12 +243,24 @@ ui_src⍪←'}'
 ui_src⍪←'td.selected {'
 ui_src⍪←'	background-color: aqua;'
 ui_src⍪←'}'
+ui_src⍪←'#file {'
+ui_src⍪←'	width: 50%;'
+ui_src⍪←'}'
 ui_src⍪←'</style>'
-ui_src⍪←'<label for="rows">Rows:</label>'
-ui_src⍪←'<input type="number" id="rows" name="rows" min="0" value="0">'
-ui_src⍪←'<label for="cols">Columns:</label>'
-ui_src⍪←'<input type="number" id="cols" name="cols" min="0" value="0">'
-ui_src⍪←'<input type="text" id="cell" name="cell" disabled>'
+ui_src⍪←'<p>'
+ui_src⍪←' <label for="file">File:</label>'
+ui_src⍪←' <input type="text" id="file" name="file" value="">'
+ui_src⍪←' <button type="button" id="link">Link</button>'
+ui_src⍪←' <button type="button" id="csv">Import</button>'
+ui_src⍪←'</p>'
+ui_src⍪←'<p>'
+ui_src⍪←' <label for="rows">Rows:</label>'
+ui_src⍪←' <input type="number" id="rows" name="rows" min="0" value="0">'
+ui_src⍪←' <label for="cols">Columns:</label>'
+ui_src⍪←' <input type="number" id="cols" name="cols" min="0" value="0">'
+ui_src⍪←' <input type="text" id="cell" name="cell" disabled>'
+ui_src⍪←'</p>'
+ui_src⍪←'<p id="msg"></p>'
 ui_src⍪←'<table id="rel"></table>'
 ui_src⍪←'<script>'
 ui_src⍪←'var s;'
@@ -123,6 +271,9 @@ ui_src⍪←'	s.onmessage = handle_message;'
 ui_src⍪←'	rows.onchange = reshape;'
 ui_src⍪←'	cols.onchange = reshape;'
 ui_src⍪←'	cell.onchange = edit;'
+ui_src⍪←'	file.onchange = file_change;'
+ui_src⍪←'	link.onclick = link_file;'
+ui_src⍪←'	csv.onclick = import_file;'
 ui_src⍪←'	rel.onclick = select;'
 ui_src⍪←'}'
 ui_src⍪←''
@@ -157,12 +308,24 @@ ui_src⍪←'		}'
 ui_src⍪←'	}'
 ui_src⍪←'}'
 ui_src⍪←''
-ui_src⍪←'function reshape(evt) {'
-ui_src⍪←'	s.send(JSON.stringify(["reshape", [rows.value, cols.value]]));'
-ui_src⍪←'}'
-ui_src⍪←''
 ui_src⍪←'function edit(evt) {'
 ui_src⍪←'	s.send(JSON.stringify(["edit", cell.value]));'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'function file_change(evt) {'
+ui_src⍪←'	s.send(JSON.stringify(["file", file.value]));'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'function import_file(evt) {'
+ui_src⍪←'	s.send(JSON.stringify(["import", file.value]));'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'function link_file(evt) {'
+ui_src⍪←'	s.send(JSON.stringify(["link", file.value]));'
+ui_src⍪←'}'
+ui_src⍪←''
+ui_src⍪←'function reshape(evt) {'
+ui_src⍪←'	s.send(JSON.stringify(["reshape", [rows.value, cols.value]]));'
 ui_src⍪←'}'
 ui_src⍪←''
 ui_src⍪←'function select(evt) {'
@@ -172,7 +335,6 @@ ui_src⍪←''
 ui_src⍪←'window.onload = init;'
 ui_src⍪←'</script>'
 
-⍝ Persistence
 ⍝ Remote Server
 
 :EndNamespace
