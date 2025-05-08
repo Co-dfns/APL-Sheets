@@ -184,10 +184,10 @@ of the correct formats.
 
 *Requirements*:
 
-- [ ] R#06. User can save the sheet to a file.
-- [ ] R#07. User can load a sheet from a file previously saved.
-- [ ] R#08. User can import a sheet from a CSV.
-- [ ] R#09. Edits should auto-save
+- [x] R#06. User can save the sheet to a file.
+- [x] R#07. User can load a sheet from a file previously saved.
+- [x] R#08. User can import a sheet from a CSV.
+- [x] R#09. Edits should auto-save
 
 Technical Tasks:
 
