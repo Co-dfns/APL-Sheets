@@ -96,7 +96,8 @@ CDESEL CEDIT CSEL FBAD FCEQ FCNQ FNEW FXST IMP SPN SPS TERM UNLK←1+⍳13
  cmds⍪←⊂'link' 'text' 'Unlink'
 ∇
 
-∇TBL;z
+∇TBL;z;rows;cols
+ cols←≢r ⋄ rows←≢⊃r
  z←(,¨'<>&')⎕R'\&lt;' '\&gt;' '\&amp;'¨¨r
  z{'<td id="c',(∊'_',∘⍕¨⍵),'">',⍺,'</td>'}¨¨←↓⍉⍳rows cols
  z←∊,∘⍪⌿(⊂rows⍴⊂'<tr>'),z,⊂rows⍴⊂'</tr>'
