@@ -200,23 +200,7 @@ Technical Tasks:
 - [x] Specify new states in the specification table
 - [x] Define CSV Import Format
 
-### Increment 4: Sorting
-
-**Goal**: To enable editable sorting
-
-*Requirements*:
-
-- [ ] R#10. Sheets can be sorted by columns.
-- [ ] R#11. Sorting can ignore headers, optionally.
-
-Technical Tasks:
-
-- [ ] Enable a permutation vector on state
-- [ ] Map permutation vector on edits
-- [ ] Define reactive UI elements to sort columns
-- [ ] Define sorting responses and stimuli
-
-### Increment 5: Live sharing
+### Increment 4: Live sharing
 
 **Goal**: To enable live sharing and editing
 
@@ -243,6 +227,22 @@ Technical Tasks, Client application:
 - [ ] Update specification to include document sharing events
 - [ ] Add UI elements to handle sharing
 - [ ] Specify remote sharing functions
+
+### Increment 5: Sorting
+
+**Goal**: To enable editable sorting
+
+*Requirements*:
+
+- [ ] R#10. Sheets can be sorted by columns.
+- [ ] R#11. Sorting can ignore headers, optionally.
+
+Technical Tasks:
+
+- [ ] Enable a permutation vector on state
+- [ ] Map permutation vector on edits
+- [ ] Define reactive UI elements to sort columns
+- [ ] Define sorting responses and stimuli
 
 ## References
 
