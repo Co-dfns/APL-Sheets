@@ -126,7 +126,35 @@ The `focus` command will put the focus on the `node_id`.
 
 ### Document Server socket protocol
 
-TBD
+Document server will communicate over a binary data pipe transmitting compressed
+and serialized APL arrays where each message comes in the form of 
+
+	('command' data)
+	
+And the following messages are supported, either sent by the server or the 
+client.
+
+| client/server | command   | data                         |
+| ------------- | --------- | ---------------------------- |
+| client        | 'link'    | ('share_name' 'user' 'pass') |
+| client        | 'doc'     | document                     |
+| client        | 'reshape' | (rows cols)                  |
+| client        | 'edit'    | ((row col) value)            |
+| client        | 'lock'    | (row col)                    |
+| client        | 'unlock'  | ''                           |
+| server        | 'doc'     | document                     |
+| server        | 'empty'   | ''                           |
+| server        | 'reshape' | (rows cols)                  |
+| server        | 'edit'    | ((row col) value)            |
+| server        | 'lock'    | ((row col) user)             |
+| server        | 'unlock'  | (row col)                    |
+
+The client is expected to initiate contact with a `link` command first, 
+and send a `doc` command on receiving an `empty` command. 
+
+The server will be presumed to have ultimate state for the document status, 
+meaning that lock, unlock, and edit commands are all to be dependent on the 
+state of the server, and a state discrepancy will resolve in favor of the server. 
 
 ### Architectual background information
 
