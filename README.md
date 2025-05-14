@@ -156,6 +156,37 @@ The server will be presumed to have ultimate state for the document status,
 meaning that lock, unlock, and edit commands are all to be dependent on the 
 state of the server, and a state discrepancy will resolve in favor of the server. 
 
+### Core Conga Protocols
+
+We are using Conga to do network communication, which forms the basis for all 
+events that will be sent and received. The documentation for Conga is located 
+here:
+
+https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf
+
+We will be using two primary protocols:
+
+1. WebSockets: This is the protocol used for the connection between the 
+   HTMLRenderer and the Dyalog APL service. We will depend on the 
+   `WSAutoUpgrade` option for the server. 
+2. Raw: To communicate with the Document Server, we will communicate over 
+   raw bytes with the `RawAsByte` option enabled on the server. 
+   
+The important sections in the Conga Documentation relevant to us are:
+
+* Sec. 9.8: Options
+* Sec. 4.2: Root Objects
+* Sec. 4.1.3: Conga Modes
+* Sec. 6.5: WebSocket Protocol
+* Sec. A.32: DRC.Wait
+* Sec. A.29: DRC.Srv
+* Sec. A.3: Conga.Init
+* Sec. A.5: Conga.New
+* Sec. A.9: DRC.Close
+* Sec. A.10: DRC.Clt
+* Sec. A.16: DRC.Init
+* Sec. A.28: DRC.SetProp
+
 ### Architectual background information
 
 Much of this architectural design is based on the SAM pattern [2]. 
@@ -243,7 +274,7 @@ Technical Tasks:
 
 Technical Tasks, Document Server:
 
-- [ ] Define the document server protocol
+- [x] Define the document server protocol
 - [ ] Specify and implement the document server stimuli and responses
 - [ ] Define the document server specification
 - [ ] Specify the document server state representation
