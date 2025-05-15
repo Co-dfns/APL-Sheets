@@ -1,15 +1,113 @@
 :Namespace DocServer
 
-⍝ API
+⎕IO ⎕ML←0 1
 
-Run←{
-	∘∘∘
+Run←{port←4570
+ uo←0⍴⊂'' un←0⍴⊂'' ⋄ us←0⍴⊂'' ⋄ ul←0 2⍴¯1 ⋄ docs←0⍴⊂0⍴⊂'' ⋄ shares←0⍴⊂''
+ _←'Conga'⎕CY⍣(0=⊃⎕NC'Conga')⊢'conga'
+ DRC←Conga.Init'DOCSERVER_',⍕port
+ _←DRC.SetProp '.' 'EventMode' 1
+ rc srv←DRC.Srv '' 'localhost' port 'raw' ('Options' DRC.Options.RawAsBytes)
+ 0≠rc:⎕SIGNAL 99
+ cmds←0⍴⊂'' '' ''
+ SPEC
 }
 
-⍝ State
-⍝ Stimuli
-⍝ Responses
-⍝ Specification
-⍝ Conga
+⍝ BL: Blocked ⋄ CL: Closed ⋄ DC: Document ⋄ ED: Edit ⋄ ER: Error ⋄ LK: Lock
+⍝ RS: Reshape ⋄ SH: Share  ⋄ UK: Unlock
+BL CL DC ED ER LK RS SH UK←1+⍳10
+∇Z←LISTEN LC
+ rc obj evt dat←{0=⊃z←DRC.Wait'.':z ⋄ (⍕z)⎕SIGNAL 99}
+ Z←LC+{
+  evt≡'Timeout':0
+  evt≡'Connect':0
+  evt≡'Closed':CL
+  evt≡'Error':ER
+  evt≢'Block':ER
+  evt dat∘←unpack dat
+  uid←uo⍳⊂obj
+  evt≡'share':{uid≠≢uo:BL ⋄ SH}⍬
+  (≢uo)=uid:BL
+  (uid≠us⍳us[uid])∧''≡docs⊃⍨shares⍳us[uid]:BL
+  evt≡'doc':DC
+  ''≡docs⊃⍨shares⍳us[uid]:BL
+  evt≡'unlock':{ul[uid;]∨.=¯1:BL ⋄ UK}⍬
+  evt≡'edit':{3≠≢dat:ER ⋄ ((2≠≢)∨(1≠≡)∨0∨.>⊢)⊃dat:ER ⋄ ul[uid;]∨.≠⊃dat:BL ⋄ ED}⍬
+  ((2≠≢)∨(1≠≡)∨0∨.>⊢)dat:ER
+  evt≡'lock':{(≢ul)≠(us,ul)⍳us[uid],dat:BL ⋄ LK}⍬
+  evt≡'reshape':{∨⌿∧/¯1≠ul⌿⍨us∊us[uid]:BL ⋄ RS}⍬
+  ⎕SIGNAL 99
+ }⍬
+∇
+
+∇SHARE;shr;nm
+ uo⍪←⊂obj ⋄ us un⍪←⊂¨shr nm←dat ⋄ ul⍪←¯1
+ →0⌿⍨(⊂shr)∊shares
+ shares⍪←⊂shr ⋄ docs⍪←⊂0⍴⊂''
+∇
+
+∇DOCUP
+ docs[shares⍳us[uo⍳⊂obj]]←⊂dat
+∇
+
+∇UNSHARE;shr
+ shr←us[uo⍳⊂obj]
+ un us uo⌿⍨←⊂~uo∊obj
+ →0⌿⍨+⌿us∊shr
+ docs shares⌿⍨←⊂~shares∊shr
+∇
+
+∇RESHAPE;rows;cols;r;shr;i
+ rows cols←dat ⋄ shr←us[uo⍳⊂obj] ⋄ r←docs⊃⍨i←shares⍳shr
+ (i⊃docs)←cols↑(rows↑¨r),(0⌈cols-≢r)⍴⊂rows⍴⊂''
+ send shr,⊂'reshape' dat
+∇
+
+∇EDIT;shr;row;col;val
+ ((row col) val)←dat ⋄ shr←us[uo⍳⊂obj]
+ ((shares⍳shr)col row⊃docs)←val
+ send shr,⊂'edit' dat
+∇
+
+∇LOCK;shr;uid
+ shr←us[uid←uo⍳⊂obj]
+ ul[uid;]←dat
+ send shr,⊂'lock' (dat (uid⊃un))
+∇
+
+∇UNLOCK;shr;uid;lk
+ shr←us[uid←uo⍳⊂obj] ⋄ lk←ul[uid;] ⋄ ul[uid;]←¯1
+ send shr,⊂'unlock' lk
+∇
+
+∇DOC;d;shr
+ d←(docs⍪⊂'')[shares⍳shr←us[uo⍳⊂obj]]
+ send shr,⊂('doc' 'empty'⊃⍨d≡'') d
+∇
+
+∇CLOSE
+ DRC.Close obj
+∇
+
+∇SPEC
+∆_:→LISTEN ⎕LC
+∆_BL:			⋄ →∆_
+∆_CL: UNSHARE		⋄ →∆_
+∆_DC: DOCUP ⋄ DOC	⋄ →∆_
+∆_ED: EDIT		⋄ →∆_
+∆_ER: CLOSE ⋄ UNSHARE	⋄ →∆_
+∆_LK: LOCK		⋄ →∆_
+∆_RS: RESHAPE		⋄ →∆_
+∆_SH: SHARE ⋄ DOC	⋄ →∆_
+∆_UK: UNLOCK		⋄ →∆_
+∇
+
+∇{Z}←send(shr dat);objs
+ objs←uo⌿⍨us∊shr ⋄ dat←pack dat
+ Z←objs {⊃DRC.Send ⍺ ⍵}¨⊂dat
+∇
+
+pack←{1(219⌶)1(220⌶)⍵}
+unpack←{0(220⌶)0(219⌶)⍵}
 
 :EndNamespace

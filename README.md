@@ -275,10 +275,10 @@ Technical Tasks:
 Technical Tasks, Document Server:
 
 - [x] Define the document server protocol
-- [ ] Specify and implement the document server stimuli and responses
-- [ ] Define the document server specification
-- [ ] Specify the document server state representation
-- [ ] Define Conga uplink for the document server
+- [x] Specify and implement the document server stimuli and responses
+- [x] Define the document server specification
+- [x] Specify the document server state representation
+- [x] Define Conga uplink for the document server
 
 Technical Tasks, Client application:
 
