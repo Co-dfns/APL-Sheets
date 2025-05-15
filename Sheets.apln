@@ -2,7 +2,11 @@
 
 ⎕IO ⎕ML←0 1
 
-Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂''
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝ MAIN API ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
+Run←{port←⍵
+ 
+ ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝ DEFINE GLOBAL STATE ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
+ 
  _←'Conga'⎕CY⍣(0=⊃⎕NC'Conga')⊢'conga'
  DRC←Conga.Init'SHEETS_',⍕port
  _←DRC.SetProp '.' 'EventMode' 1
@@ -18,31 +22,23 @@ Run←{port←⍵ ⋄ r←0⍴⊂,⊂'' ⋄ h←0⍴⊂''
  SPEC
 }
 
-SHP TERM←1+⍳2
-
 ∇Z←LISTEN LC
- rc obj evt dat←{DRC.Wait'.'}⍣{0≠⊃⍺:(⍕⍺)⎕SIGNAL 99 ⋄ 'Timeout'≢2⊃⍺}⍬
+ rc obj evt dat←{0=⊃z←DRC.Wait'.':z ⋄ (⍕z)⎕SIGNAL 99}⍬
  Z←LC+{
-  evt≢'WSReceive':TERM
-  evt dat∘←⎕JSON ⊃dat
-  evt≡'reshape':SHP
-  ⎕SIGNAL 99
+ 
+  ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝ DEFINE ABSTRACT STIMULI ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
+ 
+ ⎕SIGNAL 99
  }⍬
 ∇
 
-∇RESHAPE;rows;cols;z
- rows cols←1⊃⎕VFI ⍕dat
- r←cols↑(rows↑¨r),(0⌈cols-≢r)⍴⊂rows⍴⊂''
- z←(,¨'<>&')⎕R'\&lt;' '\&gt;' '\&amp;'¨¨r
- z{'<td id="c',(∊'_',∘⍕¨⍵),'">',⍺,'</td>'}¨¨←↓⍉⍳rows cols
- z←∊,∘⍪⌿(⊂rows⍴⊂'<tr>'),z,⊂rows⍴⊂'</tr>'
- {}DRC.Send obj ((⎕JSON ,⊂'rel' 'html' z) 1 1)
-∇
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝ DEFINE RESPONSES ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
 ∇Z←SPEC
  ∆:→LISTEN ⎕LC
- ∆_SHP:	RESHAPE	⋄ →∆
- ∆_TERM:	⋄ →0
+ 
+ ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝ DEFINE SPECIFICATION ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
+ 
 ∇
 
 ui_src←'<!DOCTYPE html>'
@@ -98,8 +94,5 @@ ui_src⍪←'}'
 ui_src⍪←''
 ui_src⍪←'window.onload = init;'
 ui_src⍪←'</script>'
-
-⍝ Persistence
-⍝ Remote Server
 
 :EndNamespace
