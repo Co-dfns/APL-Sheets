@@ -134,20 +134,20 @@ and serialized APL arrays where each message comes in the form of
 And the following messages are supported, either sent by the server or the 
 client.
 
-| client/server | command   | data                         |
-| ------------- | --------- | ---------------------------- |
-| client        | 'link'    | ('share_name' 'user' 'pass') |
-| client        | 'doc'     | document                     |
-| client        | 'reshape' | (rows cols)                  |
-| client        | 'edit'    | ((row col) value)            |
-| client        | 'lock'    | (row col)                    |
-| client        | 'unlock'  | ''                           |
-| server        | 'doc'     | document                     |
-| server        | 'empty'   | ''                           |
-| server        | 'reshape' | (rows cols)                  |
-| server        | 'edit'    | ((row col) value)            |
-| server        | 'lock'    | ((row col) user)             |
-| server        | 'unlock'  | (row col)                    |
+| client/server | command   | data                  |
+| ------------- | --------- | ----------------------|
+| client        | 'link'    | ('share_name' 'user') |
+| client        | 'doc'     | document              |
+| client        | 'reshape' | (rows cols)           |
+| client        | 'edit'    | ((row col) value)     |
+| client        | 'lock'    | (row col)             |
+| client        | 'unlock'  | ''                    |
+| server        | 'doc'     | document              |
+| server        | 'empty'   | ''                    |
+| server        | 'reshape' | (rows cols)           |
+| server        | 'edit'    | ((row col) value)     |
+| server        | 'lock'    | ((row col) user)      |
+| server        | 'unlock'  | (row col)             |
 
 The client is expected to initiate contact with a `link` command first, 
 and send a `doc` command on receiving an `empty` command. 
