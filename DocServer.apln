@@ -17,7 +17,7 @@ Run←{port←4570
 ⍝ RS: Reshape ⋄ SH: Share  ⋄ UK: Unlock
 BL CL DC ED ER LK RS SH UK←1+⍳10
 ∇Z←LISTEN LC
- rc obj evt dat←{0=⊃z←DRC.Wait'.':z ⋄ (⍕z)⎕SIGNAL 99}
+ rc obj evt dat←{0=⊃z←DRC.Wait'.':z ⋄ (⍕z)⎕SIGNAL 99}⍬
  Z←LC+{
   evt≡'Timeout':0
   evt≡'Connect':0
